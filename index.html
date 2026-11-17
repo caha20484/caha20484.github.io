@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PC Forge — конфігуратор ПК</title>
+<style>
+:root{--bg:#070914;--card:rgba(255,255,255,.045);--bd:rgba(255,255,255,.09);--tx:#e9ecff;--mu:#8d93b8;--v:#7c5cff;--c:#22d3ee;--p:#ff4fa3;--ok:#34d399;--wr:#fbbf24;--er:#f87171;--g:linear-gradient(90deg,#7c5cff,#22d3ee)}
+html.light{--bg:#f2f4fb;--card:rgba(255,255,255,.85);--bd:rgba(20,20,60,.13);--tx:#161a36;--mu:#5d6488}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--tx);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+#bgc{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#app{position:relative;z-index:1;min-height:100vh}
+.hd{display:flex;align-items:center;gap:10px;padding:11px 20px;border-bottom:1px solid var(--bd);backdrop-filter:blur(14px);background:rgba(7,9,20,.55);position:sticky;top:0;z-index:20}
+html.light .hd{background:rgba(255,255,255,.7)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+.logo.c{justify-content:center;font-size:24px;margin-bottom:4px}
+.lg{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7c5cff,#ff4fa3);display:grid;place-items:center;font-size:17px}
+.grad{background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sp{flex:1}
+.pill{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border:1px solid var(--bd);border-radius:99px;background:var(--card);font-weight:600;font-size:14px}
+.av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#ff4fa3);display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff}
+.bdg{font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;letter-spacing:.5px}
+.b-admin{background:#ff4fa3;color:#fff}.b-pro{background:linear-gradient(90deg,#fbbf24,#f59e0b);color:#2a1a00}.b-free{background:rgba(255,255,255,.14);color:var(--mu)}
+.ib{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer;font-size:16px;position:relative;padding:0;display:inline-grid;place-items:center;flex:none}
+.dot{position:absolute;right:1px;top:1px;width:10px;height:10px;border-radius:50%;background:#777;border:2px solid var(--bg)}
+.ok .dot{background:var(--ok)}.sync .dot{background:var(--wr)}.off .dot{background:var(--er)}
+.ann{background:linear-gradient(90deg,rgba(124,92,255,.25),rgba(34,211,238,.2));border-bottom:1px solid var(--bd);padding:8px 20px;text-align:center;font-size:14px}
+.page{max-width:1000px;margin:0 auto;padding:18px 16px 100px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 20px}
+.tab{padding:9px 16px;border-radius:99px;border:1px solid var(--bd);background:var(--card);color:var(--mu);cursor:pointer;font-weight:600;font-size:14px;font-family:inherit}
+.tab.on{background:var(--g);color:#fff;border-color:transparent}
+.ttl{font-size:28px;margin:6px 0 4px;font-weight:800}
+.sub{color:var(--mu);margin:0 0 16px}.sub.c{text-align:center}
+.h3{margin:26px 0 4px;font-size:20px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:20px;margin-bottom:16px;backdrop-filter:blur(12px)}
+.lb{display:block;font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.6px;margin:14px 0 7px;font-weight:700}
+.lb:first-child{margin-top:0}
+input,select,textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--bd);border-radius:12px;color:var(--tx);padding:11px 13px;font:inherit;outline:none}
+html.light input,html.light select{background:rgba(255,255,255,.9)}
+input:focus,select:focus,textarea:focus{border-color:var(--v);box-shadow:0 0 0 3px rgba(124,92,255,.2)}
+select option{background:#12142b;color:#e9ecff}
+html.light select option{background:#fff;color:#161a36}
+input[type=checkbox]{width:auto;margin-right:8px}
+.chk{display:flex;align-items:center;font-size:14px;margin:12px 0;color:var(--mu)}
+.bud{position:relative}.bud input{font-size:30px;font-weight:800;padding:14px 50px 14px 16px}
+.bud b{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:24px;color:var(--mu)}
+.rng{margin-top:14px;padding:0;height:6px;accent-color:var(--v);background:transparent;border:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.chip{padding:7px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer;font-size:13px;font-weight:600;font-family:inherit}
+.chip:hover{border-color:var(--v)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:14px;padding:5px}
+.seg button{flex:1;min-width:110px;padding:10px 12px;border:0;border-radius:10px;background:transparent;color:var(--mu);cursor:pointer;font-weight:600;font-size:14px;font-family:inherit}
+.seg button.on{background:var(--g);color:#fff}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>input{flex:1;min-width:140px}
+.big{width:100%;margin-top:20px;padding:15px;border:0;border-radius:14px;background:linear-gradient(90deg,#7c5cff,#c04bff 50%,#22d3ee);color:#fff;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 10px 30px rgba(124,92,255,.35)}
+.big:active{transform:scale(.99)}
+.btn{padding:9px 15px;border-radius:11px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer;font-weight:600;font-size:13px;font-family:inherit;text-decoration:none;display:inline-block}
+.btn:hover{border-color:var(--v)}.btn.d{border-color:rgba(248,113,113,.5);color:var(--er)}.btn.s{padding:5px 10px;font-size:12px}
+.note{font-size:13px;color:var(--mu);margin-top:10px}.note.pr{color:var(--wr)}
+.msg{padding:12px 14px;border-radius:12px;margin-top:14px;font-size:14px;border:1px solid}
+.msg.er{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.4);color:#fca5a5}
+html.light .msg.er{color:#b91c1c}
+.msg.ok{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.4);color:var(--ok)}
+.msg.in{background:rgba(124,92,255,.1);border-color:rgba(124,92,255,.35);color:var(--tx)}
+.bc .bh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.bt{font-weight:800;font-size:18px}.bs{color:var(--mu);font-size:13px}
+.btot{font-size:24px;font-weight:800;background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.prow{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--bd)}
+.pi{font-size:22px;width:34px;text-align:center;flex:none}
+.pm{flex:1;min-width:0}.pn{font-weight:600}
+.pp{font-weight:800;white-space:nowrap}
+.tgs{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.tg{font-size:11px;padding:2px 8px;border-radius:99px;background:rgba(124,92,255,.16);color:#b9a8ff;font-weight:600}
+html.light .tg{color:#5b3fe0}
+.shops{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.shop{font-size:12px;padding:3px 10px;border-radius:99px;border:1px solid var(--bd);color:var(--c);text-decoration:none;font-weight:600}
+.shop:hover{border-color:var(--c)}
+.cks{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.7}
+.cks.ok{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3)}
+.cks.bad{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.4)}
+.cks b{display:block;margin-bottom:3px}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:14px}
+.lc{border:1px solid var(--bd);border-radius:16px;padding:12px;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:8px}
+.lc img{width:100%;height:130px;object-fit:contain;background:#fff;border-radius:10px}
+.lt{font-size:13px;font-weight:600;flex:1}.lp{font-weight:800;font-size:17px}.lp s{font-size:12px;color:var(--mu);font-weight:400;margin-left:6px}
+.subtabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.st{padding:8px 15px;border-radius:99px;border:1px solid var(--bd);background:var(--card);color:var(--mu);cursor:pointer;font-weight:600;font-size:13px;font-family:inherit}
+.st.on{background:rgba(124,92,255,.25);color:var(--tx);border-color:var(--v)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px}
+.stat b{display:block;font-size:26px;font-weight:800}.stat span{font-size:12px;color:var(--mu)}
+.tb{width:100%;border-collapse:collapse;font-size:13px}.tb td,.tb th{padding:9px 8px;border-top:1px solid var(--bd);text-align:left;vertical-align:middle}
+.tb th{color:var(--mu);font-size:11px;text-transform:uppercase;border-top:0}
+.tw{overflow-x:auto}
+.plan h3{margin:0 0 8px}.plan ul{margin:0;padding-left:18px;line-height:1.9}.plan li.no{color:var(--mu);list-style:"✖ "}
+.plan.pr{border-color:rgba(251,191,36,.5)}
+.lgx{max-height:240px;overflow:auto;font-size:12px;color:var(--mu);line-height:1.7}
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px}
+.acard{width:100%;max-width:410px;background:var(--card);border:1px solid var(--bd);border-radius:22px;padding:26px;backdrop-filter:blur(18px);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.acard .seg{margin-bottom:14px}
+.capr{display:flex;gap:8px;align-items:center}.capr canvas{border-radius:10px;border:1px solid var(--bd);flex:none}
+.amsg{min-height:20px;margin-top:10px;font-size:14px;color:var(--er)}.amsg.ok{color:var(--ok)}
+.bnav{display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(10,12,26,.92);backdrop-filter:blur(16px);border-top:1px solid var(--bd);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+html.light .bnav{background:rgba(255,255,255,.95)}
+.bnav button{flex:1;background:none;border:0;color:var(--mu);font-size:10px;padding:5px 2px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bnav button span{font-size:19px}.bnav button.on{color:var(--c)}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#1b1f3d;color:#fff;border:1px solid var(--bd);padding:11px 18px;border-radius:14px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:90vw;font-size:14px}
+#toast.show{opacity:1;transform:translateX(-50%)}#toast.ok{border-color:var(--ok)}#toast.er{border-color:var(--er)}
+#err{position:fixed;left:0;right:0;top:0;z-index:100;background:#b91c1c;color:#fff;padding:10px 16px;font-size:14px}
+#err button{margin-left:10px;padding:4px 10px;border-radius:8px;border:0;cursor:pointer}
+@media(max-width:820px){.tabs{display:none}.bnav{display:flex}.hd{padding:10px 12px}.pill .nm{display:none}.pill{padding:4px}.ttl{font-size:23px}.g2,.g3{grid-template-columns:1fr}.page{padding:14px 12px 100px}.logo{font-size:17px}}
+</style>
+</head>
+<body>
+<canvas id="bgc"></canvas>
+<div id="app"></div>
+<script>
+'use strict';
+/* ====== НАЛАШТУВАННЯ ====== */
+const CLOUD_ID='https://pcforge-01-default-rtdb.firebaseio.com'; /* адреса Firebase Realtime Database */
+const ADMIN_NICK='project',ADMIN_PASS='Password';
+const FREE={pc:1,parts:5,ready:4,save:3};
+const COLS=['users','parts','stores','presets','promos','saved','log','settings'];
+const SYNC=['users','parts','stores','presets','promos','saved','settings'];
+const SEEDV='3';
+const TYPES={cpu:['🧠','Процесор'],cooler:['❄️','Охолодження'],mb:['🧩','Материнська плата'],ram:['💾','Оперативна пам’ять'],gpu:['🎮','Відеокарта'],ssd:['⚡','SSD'],psu:['🔌','Блок живлення'],case:['🏠','Корпус']};
+const ORDER=['cpu','cooler','mb','ram','gpu','ssd','psu','case'];
+const PURP={gaming:'Ігровий',work:'Робочий (монтаж/3D)',stream:'Стрім + ігри',office:'Офіс/навчання'};
+/* ====== УТИЛІТИ ====== */
+const $=(s,r)=>(r||document).querySelector(s),$$=(s,r)=>[...(r||document).querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Math.round(n).toLocaleString('uk-UA')+' ₴';
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const lsg=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}};
+const lss=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const dt=t=>new Date(t).toLocaleDateString('uk-UA');
+function toast(m,k){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}t.className='show '+(k||'');t.textContent=m;clearTimeout(toast.t);toast.t=setTimeout(()=>{t.className=''},3400)}
+async function copy(t){try{await navigator.clipboard.writeText(t);return true}catch(e){prompt('Скопіюйте:',t);return false}}
+function showErr(e){let b=$('#err');if(!b){b=document.createElement('div');b.id='err';document.body.appendChild(b)}b.innerHTML='⚠️ '+esc((e&&e.message)||e)+' <button data-a="resetlocal">Скинути локальні дані</button>'}
+window.addEventListener('error',ev=>{if(ev.error)showErr(ev.error)});
+/* ====== БАЗА ====== */
+const DB={};
+const REQ={cpu:['sock','tdp'],gpu:['tdp'],mb:['sock','ddr','vrm'],ram:['ddr','size'],ssd:['size'],psu:['watt'],cooler:['cap'],case:['forms']};
+const NUMF=['tdp','vrm','size','watt','cap'];
+function partOk(p){if(!p||!p.id||!p.type||!p.name||!(+p.price>0))return false;const r=REQ[p.type];if(!r)return false;for(const f of r){if(p[f]==null||p[f]==='')return false;if(NUMF.includes(f)&&!(+p[f]>0))return false}return true}
+const VAL={parts:partOk,stores:s=>s&&s.id&&s.name&&String(s.url||'').includes('{q}'),presets:p=>p&&p.id&&p.name&&+p.budget>0&&PURP[p.purpose],users:u=>u&&u.id&&u.nick&&u.hash,promos:p=>p&&p.id&&p.code,saved:s=>s&&s.id&&s.uid&&Array.isArray(s.ids),log:x=>x&&x.id,settings:x=>x&&x.id};
+function load(c){let a=lsg('pcf_'+c,[]);if(!Array.isArray(a))a=[];DB[c]=a.filter(x=>x&&x.id&&(!VAL[c]||VAL[c](x)))}
+function save(c){lss('pcf_'+c,DB[c])}
+const L=c=>DB[c].filter(x=>!x._d);
+const GI=(c,id)=>DB[c].find(x=>x.id===id&&!x._d);
+function upd(c,it){it._ts=Date.now();const i=DB[c].findIndex(x=>x.id===it.id);if(i<0)DB[c].push(it);else DB[c][i]=it;save(c);if(SYNC.includes(c))schedule(1500);return it}
+function del(c,id){const it=DB[c].find(x=>x.id===id);if(it){it._d=1;it._ts=Date.now();save(c);if(SYNC.includes(c))schedule(1500)}}
+function logEv(m){DB.log.push({id:uid(),t:Date.now(),m,u:(ME&&ME.nick)||'—',_ts:Date.now()});if(DB.log.length>80)DB.log.splice(0,DB.log.length-80);save('log')}
+const gs=(k,d)=>{const s=DB.settings.find(x=>x.id===k&&!x._d);return s&&s.v!=null?s.v:d};
+const ss=(k,v)=>upd('settings',{id:k,v});
+const P=x=>Math.round(x*(+gs('mult',1)||1));
+/* ====== КАТАЛОГ (сид) ====== */
+const SEEDP=[];
+function brandOf(t,n){if(t==='cpu')return /ryzen|amd/i.test(n)?'AMD':'Intel';if(t==='gpu')return /rtx|gtx|geforce/i.test(n)?'NVIDIA':'AMD';return n.split(' ')[0]}
+function sp(type,name,price,o){SEEDP.push(Object.assign({id:'s_'+type+'_'+name.toLowerCase().replace(/[^a-z0-9а-яіїє]+/g,''),type,name,price,brand:brandOf(type,name),_ts:1},o))}
+const aC=(n,pr,sock,tdp,cores,igpu,vrm,perf)=>sp('cpu',n,pr,{sock,tdp,cores,igpu,vrm,perf});
+const aG=(n,pr,tdp,vram,perf)=>sp('gpu',n,pr,{tdp,vram,perf});
+const aM=(n,pr,sock,ddr,vrm,ff)=>sp('mb',n,pr,{sock,ddr,vrm,ff});
+const aR=(n,pr,ddr,size)=>sp('ram',n,pr,{ddr,size});
+const aS=(n,pr,size)=>sp('ssd',n,pr,{size});
+const aP=(n,pr,watt)=>sp('psu',n,pr,{watt});
+const aK=(n,pr,cap,socks)=>sp('cooler',n,pr,{cap,socks});
+const aB=(n,pr,forms)=>sp('case',n,pr,{forms});
+/* CPU: назва, ціна, сокет, TDP, ядер, iGPU, мін. клас VRM, індекс ігрової продуктивності (12400F=100) */
+aC('Ryzen 5 5500',3300,'AM4',65,6,0,1,90);aC('Ryzen 5 5600',4300,'AM4',65,6,0,1,100);aC('Ryzen 5 5600G',4700,'AM4',65,6,1,1,92);
+aC('Ryzen 7 5700X',6500,'AM4',65,8,0,1,110);aC('Ryzen 7 5700X3D',9800,'AM4',105,8,0,2,140);aC('Ryzen 7 5800X3D',11800,'AM4',105,8,0,2,145);
+aC('Ryzen 5 7500F',6600,'AM5',65,6,0,1,130);aC('Ryzen 5 7600',8200,'AM5',65,6,1,1,135);aC('Ryzen 5 9600X',10500,'AM5',65,6,1,1,150);
+aC('Ryzen 7 7700',11200,'AM5',65,8,1,1,148);aC('Ryzen 7 9700X',14500,'AM5',65,8,1,1,160);aC('Ryzen 7 7800X3D',16800,'AM5',120,8,1,2,190);
+aC('Ryzen 7 9800X3D',21500,'AM5',120,8,1,2,215);aC('Ryzen 9 7900X',15800,'AM5',170,12,1,3,165);aC('Ryzen 9 9900X',19500,'AM5',120,12,1,2,175);aC('Ryzen 9 9950X',27500,'AM5',170,16,1,3,185);
+aC('Core i3-12100F',3300,'LGA1700',58,4,0,1,80);aC('Core i3-12100',4400,'LGA1700',60,4,1,1,80);aC('Core i5-12400F',5300,'LGA1700',65,6,0,1,100);
+aC('Core i5-12400',6500,'LGA1700',65,6,1,1,100);aC('Core i5-13400F',7400,'LGA1700',65,10,0,1,108);aC('Core i5-13600K',11500,'LGA1700',181,14,1,2,140);
+aC('Core i5-14600K',13500,'LGA1700',181,14,1,2,145);aC('Core i7-13700K',15500,'LGA1700',253,16,1,3,155);aC('Core i7-14700K',17500,'LGA1700',253,20,1,3,165);aC('Core i9-14900K',24000,'LGA1700',253,24,1,3,180);
+/* Материнські плати: сокет, тип DDR, клас VRM (1–3), форм-фактор */
+aM('Gigabyte B450M DS3H',2800,'AM4','DDR4',1,'mATX');aM('Gigabyte B550M DS3H',3600,'AM4','DDR4',1,'mATX');aM('MSI B550-A PRO',4600,'AM4','DDR4',2,'ATX');
+aM('ASUS TUF Gaming B550-PLUS',5600,'AM4','DDR4',2,'ATX');aM('MSI MAG B550 Tomahawk',6500,'AM4','DDR4',3,'ATX');
+aM('ASRock A620M-HDV/M.2+',3300,'AM5','DDR5',1,'mATX');aM('Gigabyte B650M DS3H',5200,'AM5','DDR5',2,'mATX');aM('MSI MAG B650 Tomahawk WiFi',8500,'AM5','DDR5',3,'ATX');
+aM('ASUS TUF Gaming B650-PLUS WiFi',8800,'AM5','DDR5',3,'ATX');aM('MSI B850 Gaming Plus WiFi',9500,'AM5','DDR5',3,'ATX');aM('Gigabyte X870 Aorus Elite WiFi7',13500,'AM5','DDR5',3,'ATX');aM('ASUS ROG Strix X670E-E Gaming WiFi',17500,'AM5','DDR5',3,'ATX');
+aM('Gigabyte H610M S2H DDR4',2600,'LGA1700','DDR4',1,'mATX');aM('MSI PRO B660M-A DDR4',4000,'LGA1700','DDR4',1,'mATX');aM('MSI B760 Gaming Plus WiFi DDR4',5500,'LGA1700','DDR4',2,'ATX');
+aM('ASUS TUF Gaming B760-PLUS WiFi D4',7200,'LGA1700','DDR4',2,'ATX');aM('MSI MAG Z790 Tomahawk WiFi DDR4',9500,'LGA1700','DDR4',3,'ATX');
+aM('MSI PRO B760M-P DDR5',4500,'LGA1700','DDR5',1,'mATX');aM('Gigabyte B760M Gaming X DDR5',5600,'LGA1700','DDR5',2,'mATX');aM('MSI MAG B760 Tomahawk WiFi',8000,'LGA1700','DDR5',3,'ATX');
+aM('ASUS TUF Gaming Z790-PLUS WiFi',11500,'LGA1700','DDR5',3,'ATX');aM('MSI MPG Z790 Carbon WiFi',14500,'LGA1700','DDR5',3,'ATX');
+/* Оперативна пам’ять: тип, обсяг ГБ (комплект) */
+aR('Kingston Fury Beast 16GB (2x8) DDR4-3200',1500,'DDR4',16);aR('Corsair Vengeance LPX 16GB (2x8) DDR4-3600',1700,'DDR4',16);aR('Kingston Fury Beast 32GB (2x16) DDR4-3200',2800,'DDR4',32);
+aR('G.Skill Ripjaws V 32GB (2x16) DDR4-3600',3100,'DDR4',32);aR('Corsair Vengeance LPX 64GB (2x32) DDR4-3200',5500,'DDR4',64);
+aR('Kingston Fury Beast 16GB (2x8) DDR5-5600',2300,'DDR5',16);aR('Kingston Fury Beast 32GB (2x16) DDR5-6000',4300,'DDR5',32);aR('G.Skill Flare X5 32GB (2x16) DDR5-6000',4500,'DDR5',32);
+aR('Corsair Vengeance 32GB (2x16) DDR5-6000',4800,'DDR5',32);aR('G.Skill Trident Z5 RGB 32GB (2x16) DDR5-6400',5600,'DDR5',32);aR('Kingston Fury Beast 64GB (2x32) DDR5-6000',8800,'DDR5',64);aR('Corsair Vengeance 64GB (2x32) DDR5-6400',9800,'DDR5',64);
+/* Відеокарти: TDP, VRAM, індекс продуктивності (RTX 4060 = 100, орієнтовно) */
+aG('GeForce RTX 3050 6GB',6500,70,6,55);aG('GeForce RTX 3050 8GB',8000,130,8,63);aG('Radeon RX 6600 8GB',8800,132,8,90);aG('GeForce RTX 5050 8GB',11500,130,8,98);
+aG('Radeon RX 7600 8GB',11500,165,8,98);aG('GeForce RTX 4060 8GB',13500,115,8,100);aG('Radeon RX 7600 XT 16GB',14500,190,16,108);aG('GeForce RTX 5060 8GB',14500,145,8,115);
+aG('Radeon RX 9060 XT 16GB',19500,160,16,133);aG('GeForce RTX 5060 Ti 16GB',21000,180,16,135);aG('Radeon RX 7700 XT 12GB',18500,245,12,140);aG('Radeon RX 7800 XT 16GB',24000,263,16,165);
+aG('GeForce RTX 4070 Super 12GB',33000,220,12,185);aG('GeForce RTX 5070 12GB',31500,250,12,190);aG('Radeon RX 9070 16GB',31000,220,16,190);aG('Radeon RX 9070 XT 16GB',35500,304,16,215);
+aG('GeForce RTX 5070 Ti 16GB',45000,300,16,240);aG('Radeon RX 7900 XTX 24GB',44000,355,24,250);aG('GeForce RTX 5080 16GB',68000,360,16,290);aG('GeForce RTX 5090 32GB',150000,575,32,440);
+/* SSD */
+aS('Kingston A400 480GB SATA',1100,480);aS('Kingston NV2 500GB NVMe',1400,500);aS('Kingston NV2 1TB NVMe',2300,1000);aS('WD Blue SN580 1TB NVMe',2600,1000);aS('Samsung 990 EVO 1TB NVMe',3300,1000);
+aS('Kingston NV2 2TB NVMe',4200,2000);aS('WD Black SN850X 1TB NVMe',4200,1000);aS('Samsung 990 EVO 2TB NVMe',6000,2000);aS('WD Black SN850X 2TB NVMe',7500,2000);aS('Samsung 990 Pro 2TB NVMe',8500,2000);
+/* Блоки живлення */
+aP('Deepcool PK550D 550W',1500,550);aP('be quiet! System Power 10 550W',2000,550);aP('MSI MAG A650BN 650W',2200,650);aP('Corsair CX650 650W',2700,650);aP('MSI MAG A750GL PCIE5 750W',3600,750);
+aP('Seasonic Focus GX-750 750W',4600,750);aP('Corsair RM850e 850W',5500,850);aP('Seasonic Focus GX-850 850W',6000,850);aP('be quiet! Pure Power 12 M 1000W',6800,1000);aP('Corsair RM1000x 1000W',8000,1000);aP('Corsair HX1200 1200W',11000,1200);aP('Corsair HX1500i 1500W',15000,1500);
+/* Охолодження: потужність (Вт), сумісні сокети */
+aK('Deepcool Gammaxx 400 V2',700,150,'AM4,LGA1700');aK('ID-Cooling SE-214-XT',750,180,'AM4,AM5,LGA1700');aK('Deepcool AK400',1300,220,'AM4,AM5,LGA1700');
+aK('Thermalright Peerless Assassin 120 SE',1500,245,'AM4,AM5,LGA1700');aK('Deepcool AK620',2400,260,'AM4,AM5,LGA1700');aK('Deepcool LS520 SE 240мм (СВО)',3300,300,'AM4,AM5,LGA1700');
+aK('Arctic Liquid Freezer III 280',4300,330,'AM4,AM5,LGA1700');aK('Arctic Liquid Freezer III 360',4900,380,'AM4,AM5,LGA1700');
+/* Корпуси: які форм-фактори плат підтримують */
+aB('Zalman T8',1300,'ATX,mATX');aB('Deepcool CC560',2000,'ATX,mATX');aB('Deepcool CH370',2800,'mATX');aB('Montech Air 903 Max',2700,'ATX,mATX');aB('Corsair 4000D Airflow',4500,'ATX,mATX');aB('Fractal Design North',6500,'ATX,mATX');
+const SEEDS=[['Rozetka','https://rozetka.com.ua/ua/search/?text={q}'],['Фокстрот','https://www.foxtrot.com.ua/uk/search?q={q}'],['MOYO','https://www.moyo.ua/ua/search/?q={q}'],['Comfy','https://comfy.ua/ua/search/?q={q}'],['Цитрус','https://www.citrus.ua/search?query={q}'],['ALLO','https://allo.ua/ua/catalogsearch/result/?q={q}'],['Telemart','https://telemart.ua/ua/search/?search_que={q}'],['Brain','https://brain.com.ua/ukr/search/?Search={q}'],['Hotline','https://hotline.ua/ua/sr/?q={q}']].map((s,i)=>({id:'st_'+i,name:s[0],url:s[1],_ts:1}));
+const SEEDPRE=[['Старт: ігровий',20000,'gaming'],['Ігровий 25K',25000,'gaming'],['Бюджетний геймінг',30000,'gaming'],['Ігровий 35K',35000,'gaming'],['Оптимальний 1080p',40000,'gaming'],['Сильний 1440p',55000,'gaming'],['Топ 1440p/4K',80000,'gaming'],['Ультра',130000,'gaming'],['Монтаж 45K',45000,'work'],['Робоча станція',75000,'work'],['3D / рендер',110000,'work'],['Стрім + ігри 50K',50000,'stream'],['Стрімер Pro',85000,'stream'],['Офіс економ',14000,'office'],['Офіс 18K',18000,'office'],['Навчання',22000,'office']].map((p,i)=>({id:'pr_'+i,name:p[0],budget:p[1],purpose:p[2],_ts:1}));
+function repairSeed(c,seed,force,ver){let n=0;seed.forEach(s=>{const i=DB[c].findIndex(x=>x.id===s.id),cur=DB[c][i];let it=null;
+ if(!cur)it=Object.assign({},s,{_ts:1});else if(force===true||(VAL[c]&&!VAL[c](cur)))it=Object.assign({},s,{_ts:Date.now()});else if(ver&&cur._ts===1)it=Object.assign({},s,{_ts:1});
+ if(it){if(i<0)DB[c].push(it);else DB[c][i]=it;n++}});save(c);return n}
+function seedAll(){const ver=lsg('pcf_seedv','')!==SEEDV;repairSeed('parts',SEEDP,false,ver);repairSeed('stores',SEEDS,false,false);repairSeed('presets',SEEDPRE,false,ver);lss('pcf_seedv',SEEDV)}
+/* ====== ЗАСТОСУНОК: СТАН, АКАУНТИ ====== */
+const ADMINU={id:'u:'+ADMIN_NICK,nick:'Project',role:'admin',plan:'pro',until:0,created:0};
+let ME=null,UI={},CAP='';
+const isPro=u=>!!u&&(u.role==='admin'||(u.plan==='pro'&&(!u.until||u.until>Date.now())));
+const uiKey=()=>'pcf_ui_'+(ME?ME.id:'guest');
+function loadUI(){UI=Object.assign({tab:'pc',budget:40000,purpose:'gaming',fcpu:'',fgpu:'',ptype:'gpu',psort:'best',pmax:'',pmin:'',pq:'',psock:'',pddr:'',adm:'ov',apt:'cpu',apq:'',aptype:''},lsg(uiKey(),{}))}
+const saveUI=()=>lss(uiKey(),UI);
+function findUser(nick){const id='u:'+String(nick).trim().toLowerCase();if(id===ADMINU.id)return ADMINU;return DB.users.find(x=>x.id===id&&!x._d)}
+function curUser(){let s=lsg('pcf_session',null);if(!s){try{s=JSON.parse(sessionStorage.getItem('pcf_session')||'null')}catch(e){}}if(!s||!s.uid)return null;if(s.uid===ADMINU.id)return ADMINU;const u=DB.users.find(x=>x.id===s.uid&&!x._d);return u&&!u.ban?u:null}
+function cyrb(s){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0,c;i<s.length;i++){c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return(4294967296*(2097151&h2)+(h1>>>0)).toString(36)}
+async function hashPw(pw,salt){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(salt+':'+pw));return 'h1'+[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return 'c'+cyrb(salt+':'+pw)}}
+async function checkPw(u,pw){if(u===ADMINU){const s=gs('adminpass',null);if(s&&s.s)return(await hashPw(pw,s.s))===s.h;return pw===ADMIN_PASS}return(await hashPw(pw,u.salt))===u.hash}
+function grant(u,d){const base=Math.max(Date.now(),(isPro(u)&&u.until)||0);upd('users',Object.assign({},u,{plan:'pro',until:d>0?base+d*864e5:0}));ME=curUser()}
+/* ====== СУМІСНІСТЬ І ПІДБІР ЗБІРКИ ====== */
+const MINRAM={gaming:16,work:32,stream:32,office:16},MINSSD={gaming:500,work:1000,stream:1000,office:480};
+const socksOf=c=>String(c.socks||'').split(',').map(s=>s.trim()).filter(Boolean);
+const formsOf=c=>String(c.forms||'').split(',').map(s=>s.trim()).filter(Boolean);
+const needW=(cpu,gpu)=>(cpu.tdp+(gpu?gpu.tdp:0)+80)*1.25;
+function catalog(){const by={};L('parts').forEach(p=>{(by[p.type]=by[p.type]||[]).push(Object.assign({},p,{price:P(p.price)}))});return by}
+const cheapest=(arr,fn)=>{let b=null;for(const x of arr)if(fn(x)&&(!b||x.price<b.price))b=x;return b};
+function candidates(purpose,flt,by){
+ const out=[],cpus=(by.cpu||[]).filter(c=>!flt.cpu||c.brand===flt.cpu),mbs=by.mb||[],rams=by.ram||[],ssds=by.ssd||[],psus=by.psu||[],cools=by.cooler||[],cases=by.case||[];
+ const gpus=purpose==='office'?[null]:(by.gpu||[]).filter(g=>!flt.gpu||g.brand===flt.gpu);
+ const mr=MINRAM[purpose],ms=MINSSD[purpose];
+ const ssdO=[cheapest(ssds,s=>s.size>=ms),cheapest(ssds,s=>s.size>=Math.max(1000,ms*2)),cheapest(ssds,s=>s.size>=2000)].filter((x,i,a)=>x&&a.indexOf(x)===i);
+ if(!ssdO.length)return out;
+ for(const cpu of cpus){
+  for(const ddr of ['DDR4','DDR5']){
+   const mb=cheapest(mbs,m=>m.sock===cpu.sock&&m.ddr===ddr&&m.vrm>=(cpu.vrm||1));if(!mb)continue;
+   const rO=[cheapest(rams,r=>r.ddr===ddr&&r.size>=mr),cheapest(rams,r=>r.ddr===ddr&&r.size>=Math.max(32,mr*2))].filter((x,i,a)=>x&&a.indexOf(x)===i);if(!rO.length)continue;
+   const cooler=cheapest(cools,c=>c.cap>=cpu.tdp&&(!c.socks||socksOf(c).includes(cpu.sock)));if(!cooler)continue;
+   const cs=cheapest(cases,c=>formsOf(c).includes(mb.ff||'ATX'));if(!cs)continue;
+   for(const gpu of gpus){
+    if(!gpu&&!cpu.igpu)continue;
+    const nw=needW(cpu,gpu),psu=cheapest(psus,p=>p.watt>=nw);if(!psu)continue;
+    for(const ram of rO)for(const ssd of ssdO){
+     const items={cpu,cooler,mb,ram,gpu,ssd,psu,case:cs};
+     out.push({items,total:cpu.price+cooler.price+mb.price+ram.price+(gpu?gpu.price:0)+ssd.price+psu.price+cs.price});
+    }}}}
+ return out}
+function score(it,purpose,total){
+ const c=it.cpu,g=it.gpu,gp=g?(g.perf||g.price/130):0,cp=c.perf||c.price/70,cores=c.cores||6;let s;
+ if(purpose==='gaming')s=gp*.65+cp*.35-Math.max(0,gp-cp*1.7)*.35-Math.max(0,cp-gp*1.8)*.2+(g&&g.vram>=16?6:g&&g.vram>=12?3:0)+(it.ram.size>=32?3:0)+(it.ssd.size>=1000?2:0);
+ else if(purpose==='work')s=cp*.45+cores*5+gp*.3+(it.ram.size>=64?8:0)+(it.ssd.size>=2000?3:0);
+ else if(purpose==='stream')s=cp*.35+cores*3+gp*.5-Math.max(0,gp-cp*1.7)*.3+(it.ram.size>=32?3:0);
+ else s=Math.min(cp,115)*.7+Math.min(cores,12)*2+(it.ssd.size>=1000?3:0)+(it.ram.size>=32?2:0);
+ return s-total/20000}
+function buildPC(budget,purpose,flt){
+ const all=candidates(purpose,flt||{},catalog());
+ if(!all.length)return{vars:[],min:0,n:0};
+ let min=Infinity;for(const c of all)if(c.total<min)min=c.total;
+ const vars=[],seen=new Set();
+ [['max','🚀 Максимум за бюджет',1],['bal','⚖️ Збалансована',.9],['eco','💸 Економна',.78]].forEach(m=>{
+  const cap=budget*m[2];let b=null,bs=-1e9;
+  for(const c of all){if(c.total>cap)continue;const s=score(c.items,purpose,c.total);if(s>bs){bs=s;b=c}}
+  if(b){const key=ORDER.map(t=>b.items[t]?b.items[t].id:'-').join('|');if(!seen.has(key)){seen.add(key);vars.push({mode:m[0],title:m[1],items:b.items,total:b.total})}}
+ });
+ return{vars,min,n:all.length}}
+function checks(it){
+ const{cpu,mb,ram,gpu,psu,cooler,case:cs}=it,r=[],add=(ok,t)=>r.push({ok,t});
+ if(!(cpu&&mb&&ram&&psu&&cooler&&cs))return[{ok:false,t:'Не всі деталі знайдено в каталозі'}];
+ add(cpu.sock===mb.sock,`Сокет: процесор ${cpu.sock} ↔ плата ${mb.sock}`);
+ add(ram.ddr===mb.ddr,`Пам’ять: ${ram.ddr} ↔ плата підтримує ${mb.ddr}`);
+ add(mb.vrm>=(cpu.vrm||1),`Живлення процесора (VRM): клас плати ${mb.vrm} ≥ потрібного ${cpu.vrm||1}`);
+ const sk=!cooler.socks||socksOf(cooler).includes(cpu.sock);
+ add(sk&&cooler.cap>=cpu.tdp,`Кулер: сокет ${cpu.sock} ${sk?'підтримується':'НЕ підтримується'}, відведення ${cooler.cap} Вт ${cooler.cap>=cpu.tdp?'≥':'<'} TDP ${cpu.tdp} Вт`);
+ const nw=needW(cpu,gpu);add(psu.watt>=nw,`Блок живлення: ${psu.watt} Вт ${psu.watt>=nw?'≥':'<'} ${Math.ceil(nw)} Вт (запас 25%)`);
+ add(formsOf(cs).includes(mb.ff||'ATX'),`Корпус: форм-фактор плати ${mb.ff||'ATX'} ${formsOf(cs).includes(mb.ff||'ATX')?'підходить':'НЕ підходить'}`);
+ if(!gpu)add(!!cpu.igpu,'Без відеокарти: у процесора є вбудована графіка');
+ return r}
+function itemsFromIds(ids){const it={};let miss=0;ids.forEach(id=>{const p=GI('parts',id);if(p)it[p.type]=Object.assign({},p,{price:P(p.price)});else miss++});return{it,miss}}
+/* ====== МАГАЗИНИ ТА ПОСИЛАННЯ ====== */
+const QP={cpu:'Процесор ',gpu:'Відеокарта ',mb:'Материнська плата ',ram:'Оперативна пам’ять ',ssd:'SSD ',psu:'Блок живлення ',cooler:'Кулер ',case:'Корпус '};
+const queryOf=p=>(QP[p.type]||'')+(p.type==='cpu'?p.brand+' ':'')+p.name;
+const stores=()=>L('stores').filter(s=>!s.off);
+const sUrl=(s,q)=>String(s.url).replace('{q}',encodeURIComponent(q));
+const storeLinks=p=>stores().map(s=>`<a class="shop" target="_blank" rel="noopener noreferrer" href="${esc(sUrl(s,queryOf(p)))}">${esc(s.name)}</a>`).join('');
+function specs(p){const t=p.type,a=[];
+ if(t==='cpu')a.push(p.sock,(p.cores||'?')+' ядер',p.tdp+' Вт',p.igpu?'є iGPU':'без iGPU');
+ else if(t==='gpu')a.push((p.vram||'?')+' ГБ',p.tdp+' Вт');
+ else if(t==='mb')a.push(p.sock,p.ddr,'VRM '+p.vrm,p.ff||'ATX');
+ else if(t==='ram')a.push(p.ddr,p.size+' ГБ');
+ else if(t==='ssd')a.push(p.size>=1000?(p.size/1000)+' ТБ':p.size+' ГБ');
+ else if(t==='psu')a.push(p.watt+' Вт');
+ else if(t==='cooler')a.push('до '+p.cap+' Вт',p.socks||'універсальний');
+ else if(t==='case')a.push(p.forms);
+ return a.filter(Boolean)}
+const tags=p=>specs(p).map(s=>`<span class="tg">${esc(s)}</span>`).join('');
+/* ====== КАРТКА ЗБІРКИ ====== */
+const RES={};
+function bcard(key,title,v,o){o=o||{};RES[key]=v;const pro=isPro(ME);
+ const rows=ORDER.map(t=>v.items[t]).filter(Boolean).map(p=>`<div class="prow"><div class="pi">${TYPES[p.type][0]}</div><div class="pm"><div class="pn">${esc(p.name)}</div><div class="tgs">${tags(p)}</div>${pro?`<div class="shops">${storeLinks(p)}</div>`:''}</div><div class="pp">${fmt(p.price)}</div></div>`).join('');
+ const ck=checks(v.items),ok=ck.every(c=>c.ok);
+ return `<div class="card bc"><div class="bh"><div><div class="bt">${title}</div><div class="bs">${o.sub||''}</div></div><div class="btot">${fmt(v.total)}</div></div>${rows}
+ <div class="cks ${ok?'ok':'bad'}"><b>${ok?'✅ Сумісність перевірена':'⚠️ Є проблеми сумісності'}</b>${ck.map(c=>`<div>${c.ok?'✔':'✖'} ${esc(c.t)}</div>`).join('')}</div>
+ <div class="acts">${o.nosave?'':`<button class="btn" data-a="save" data-k="${key}">💾 Зберегти</button>`}${pro?`<button class="btn" data-a="openall" data-k="${key}">🛒 Відкрити все в магазині</button>`:'<span class="note pr">🔒 Посилання на купівлю — у Premium</span>'}${o.extra||''}</div></div>`}
+/* ====== ВИГЛЯДИ ====== */
+function vPC(){const pro=isPro(ME),sel=(id,cur,opts,lab)=>`<select id="${id}" ${pro?'':'disabled'}><option value="">${lab}</option>${opts.map(o=>`<option ${cur===o?'selected':''}>${o}</option>`).join('')}</select>`;
+ return `<h2 class="ttl">🖥️ ПК за бюджетом</h2><p class="sub">Вкажіть суму — підберемо збірку з перевіркою сокета, DDR4/DDR5, VRM, охолодження, живлення та корпусу.</p>
+ <div class="card"><label class="lb">Ваш бюджет</label><div class="bud"><input id="bud" type="number" inputmode="numeric" min="5000" step="500" value="${UI.budget}"><b>₴</b></div>
+ <input id="rng" class="rng" type="range" min="10000" max="200000" step="500" value="${Math.min(UI.budget,200000)}">
+ <div class="chips">${[15000,25000,40000,60000,100000,150000].map(v=>`<button class="chip" data-a="chip" data-v="${v}">${v.toLocaleString('uk-UA')} ₴</button>`).join('')}</div>
+ <label class="lb">Призначення</label><div class="seg">${Object.keys(PURP).map(k=>`<button class="${UI.purpose===k?'on':''}" data-a="purp" data-v="${k}">${PURP[k]}</button>`).join('')}</div>
+ <div class="g2"><div><label class="lb">Процесор ${pro?'':'🔒'}</label>${sel('fcpu',UI.fcpu,['AMD','Intel'],'Будь-який')}</div><div><label class="lb">Відеокарта ${pro?'':'🔒'}</label>${sel('fgpu',UI.fgpu,['NVIDIA','AMD'],'Будь-яка')}</div></div>
+ ${pro?'':'<div class="note pr">🔒 Фільтри брендів, 3 варіанти збірки та посилання на купівлю — у Premium.</div>'}
+ <button class="big" data-a="build">⚡ Зібрати ПК</button></div><div id="res"></div>`}
+ACT_BUILD:0;
+function vPart(){const pro=isPro(ME),o=(v,t)=>`<option value="${v}" ${UI.ptype===v?'selected':''}>${t}</option>`;
+ return `<h2 class="ttl">🧩 Деталь за бюджетом</h2><p class="sub">Знайдіть найкращу деталь у потрібній ціні. Фільтри сокета та DDR допомагають підібрати сумісне.</p>
+ <div class="card"><div class="g3"><div><label class="lb">Тип деталі</label><select data-p="ptype">${Object.keys(TYPES).map(k=>o(k,TYPES[k][1])).join('')}</select></div>
+ <div><label class="lb">Сортування</label><select data-p="psort"><option value="best" ${UI.psort==='best'?'selected':''}>Найкраща за бюджет</option><option value="asc" ${UI.psort==='asc'?'selected':''}>Ціна ↑</option><option value="desc" ${UI.psort==='desc'?'selected':''}>Ціна ↓</option><option value="name" ${UI.psort==='name'?'selected':''}>За назвою</option></select></div>
+ <div><label class="lb">Пошук за назвою</label><input data-p="pq" value="${esc(UI.pq)}" placeholder="напр. RTX, B650, DDR5"></div>
+ <div><label class="lb">Макс. ціна, ₴</label><input data-p="pmax" type="number" value="${esc(UI.pmax)}" placeholder="напр. 20000"></div>
+ <div><label class="lb">Мін. ціна, ₴</label><input data-p="pmin" type="number" value="${esc(UI.pmin)}" placeholder="0"></div>
+ <div class="row" style="align-items:flex-end"><div style="flex:1"><label class="lb">Сокет</label><select data-p="psock"><option value="">Будь-який</option>${['AM4','AM5','LGA1700'].map(s=>`<option ${UI.psock===s?'selected':''}>${s}</option>`).join('')}</select></div><div style="flex:1"><label class="lb">Пам’ять</label><select data-p="pddr"><option value="">Будь-яка</option>${['DDR4','DDR5'].map(s=>`<option ${UI.pddr===s?'selected':''}>${s}</option>`).join('')}</select></div></div></div>
+ <div class="note">Сокет діє для процесорів, плат і кулерів; DDR — для плат і пам’яті.</div></div><div class="card" id="plist"></div>`}
+function paintParts(){const el=$('#plist');if(!el)return;const pro=isPro(ME);
+ let a=L('parts').filter(p=>p.type===UI.ptype);const mx=+UI.pmax||0,mn=+UI.pmin||0,q=String(UI.pq||'').toLowerCase().trim();
+ a=a.filter(p=>(!mx||P(p.price)<=mx)&&(!mn||P(p.price)>=mn)&&(!q||p.name.toLowerCase().includes(q))&&(!UI.psock||p.sock===UI.psock||socksOf(p).includes(UI.psock))&&(!UI.pddr||p.ddr===UI.pddr));
+ const s=UI.psort;a.sort((x,y)=>s==='asc'?x.price-y.price:s==='desc'?y.price-x.price:s==='name'?x.name.localeCompare(y.name):((y.perf||0)-(x.perf||0))||y.price-x.price);
+ const tot=a.length,lim=pro?150:FREE.parts,show=a.slice(0,lim);
+ el.innerHTML=!tot?'<div class="note">Нічого не знайдено. Змініть фільтри.</div>':`<div class="note" style="margin:0 0 6px">Знайдено: ${tot}</div>`+show.map(p=>`<div class="prow"><div class="pi">${TYPES[p.type][0]}</div><div class="pm"><div class="pn">${esc(p.name)}</div><div class="tgs">${tags(p)}</div>${pro?`<div class="shops">${storeLinks(p)}</div>`:''}</div><div class="pp">${fmt(P(p.price))}</div></div>`).join('')+(tot>lim?`<div class="note pr">🔒 Ще ${tot-lim} — у Premium (разом із посиланнями «Де купити»).</div>`:!pro?'<div class="note pr">🔒 Посилання «Де купити» — у Premium.</div>':'')}
+function vReady(){const pro=isPro(ME);
+ const pres=L('presets').sort((a,b)=>a.budget-b.budget).slice(0,pro?50:FREE.ready);
+ const cards=pres.map(p=>{const r=buildPC(p.budget,p.purpose,{});if(!r.vars.length)return `<div class="card"><b>${esc(p.name)}</b><div class="note">Недоступна: мінімум ≈ ${fmt(r.min||0)}</div></div>`;return bcard('pre_'+p.id,esc(p.name),r.vars[0],{sub:`${PURP[p.purpose]} · бюджет ${fmt(p.budget)}`})}).join('');
+ return `<h2 class="ttl">📦 Готові збірки</h2><p class="sub">Програма сама шукає готові ПК у магазині та дає пряме посилання на лот.</p>
+ <div class="card"><div class="g2"><div><label class="lb">Бюджет, ₴</label><input id="rbud" type="number" value="${UI.budget}"></div><div><label class="lb">Призначення</label><select id="rpur">${Object.keys(PURP).map(k=>`<option value="${k}" ${UI.purpose===k?'selected':''}>${PURP[k]}</option>`).join('')}</select></div></div>
+ <button class="big" data-a="live">🔎 Знайти готові ПК</button><div id="live"></div></div>
+ <h3 class="h3">✅ Наші перевірені збірки</h3><p class="sub">Збираються з каталогу з перевіркою сумісності за поточними цінами.${pro?'':` Free: ${FREE.ready} збірки.`}</p>${cards}`}
+function vSaved(){const a=L('saved').filter(s=>s.uid===ME.id).sort((x,y)=>y.t-x.t);
+ return `<h2 class="ttl">⭐ Збережене</h2><p class="sub">Ваші збережені збірки.${isPro(ME)?'':` Free: до ${FREE.save}.`}</p>`+(a.length?a.map(s=>{const{it,miss}=itemsFromIds(s.ids);const total=ORDER.reduce((n,t)=>n+(it[t]?it[t].price:0),0);
+  return bcard('sv_'+s.id,esc(s.name),{items:it,total},{sub:dt(s.t)+(miss?` · ⚠️ деяких деталей (${miss}) уже немає в каталозі`:''),nosave:1,extra:`<button class="btn d" data-a="delsaved" data-id="${s.id}">🗑 Видалити</button>`})}).join(''):'<div class="card"><div class="note">Поки порожньо. Зберігайте збірки кнопкою «💾 Зберегти».</div></div>')}
+function vTariff(){const pro=isPro(ME),adm=ME.role==='admin',left=ME.until&&pro&&!adm?Math.ceil((ME.until-Date.now())/864e5):0;
+ return `<h2 class="ttl">💎 Тариф</h2><p class="sub">Ваш тариф: <b>${adm?'ADMIN (повний доступ)':pro?'Premium':'Free'}</b>${pro&&!adm?(ME.until?` · залишилось ${left} дн.`:' · безстроково'):''}</p>
+ <div class="g2"><div class="card plan"><h3>Free</h3><ul><li>1 варіант збірки ПК</li><li>${FREE.parts} деталей у списку</li><li>${FREE.ready} готові ПК у пошуку</li><li>До ${FREE.save} збережених збірок</li><li class="no">Без посилань на купівлю</li><li class="no">Без фільтрів брендів</li></ul></div>
+ <div class="card plan pr"><h3>💎 Premium</h3><ul><li>3 варіанти збірки ПК</li><li>Фільтри брендів CPU/GPU</li><li>Посилання «Де купити»: Rozetka, Фокстрот, MOYO, Comfy та інші</li><li>Прямі лоти готових ПК</li><li>Необмежені збереження</li></ul></div></div>
+ <div class="card"><label class="lb">Промокод</label><div class="row"><input id="promo" placeholder="Введіть промокод"><button class="btn" data-a="promo">Активувати</button></div>
+ ${!ME.trialUsed&&!pro&&+gs('trial',7)>0?`<div style="margin-top:12px"><button class="btn" data-a="trial">🎁 Пробний Premium на ${gs('trial',7)} дн.</button></div>`:''}<div class="note">Щоб придбати Premium — зверніться до адміністратора.</div></div>`}
+/* ====== АДМІН ====== */
+const PF={cpu:['sock','tdp','cores','igpu','vrm','perf'],gpu:['tdp','vram','perf'],mb:['sock','ddr','vrm','ff'],ram:['ddr','size'],ssd:['size'],psu:['watt'],cooler:['cap','socks'],case:['forms']};
+const PHINT={cpu:'sock=AM5, tdp=65, cores=6, igpu=1/0, vrm=1–3, perf=130',gpu:'tdp=200, vram=16, perf=120',mb:'sock=AM5, ddr=DDR5, vrm=1–3, ff=ATX або mATX',ram:'ddr=DDR5, size=32 (ГБ)',ssd:'size=1000 (ГБ)',psu:'watt=750',cooler:'cap=220 (Вт), socks=AM4,AM5,LGA1700',case:'forms=ATX,mATX'};
+const planB=u=>u.role==='admin'?'<span class="bdg b-admin">ADMIN</span>':isPro(u)?'<span class="bdg b-pro">PRO</span>':'<span class="bdg b-free">FREE</span>';
+const AV={
+ ov(){const us=L('users'),pros=us.filter(isPro).length,lg=[...DB.log].reverse().slice(0,30);const cu=lsg('pcf_cloud','')==='none'?'':cloudUrl();
+  return `<div class="stats"><div class="stat"><b>${us.length+1}</b><span>Користувачів</span></div><div class="stat"><b>${pros+1}</b><span>Premium/Admin</span></div><div class="stat"><b>${L('parts').length}</b><span>Деталей у базі</span></div><div class="stat"><b>${L('presets').length}</b><span>Збірок</span></div><div class="stat"><b>${L('saved').length}</b><span>Збережень</span></div><div class="stat"><b>${L('promos').length}</b><span>Промокодів</span></div><div class="stat"><b>${stores().length}</b><span>Магазинів</span></div></div>
+  <div class="card"><h3 style="margin:0 0 6px">☁️ Хмара (Firebase)</h3><div class="note" style="margin:0 0 10px">Стан: <b id="cst">${esc(cloudStatus())}</b></div>
+  <label class="lb">Адреса Firebase Realtime Database</label><input id="cid" value="${esc(cu)}" placeholder="https://назва-default-rtdb.firebaseio.com">
+  <div class="acts"><button class="btn" data-a="cloudsave">Зберегти</button><button class="btn" data-a="cloudtest">🧪 Тест</button><button class="btn" data-a="cloudforce">⬆️ Надіслати все</button><button class="btn" data-a="cloudinvite">🔗 Посилання-запрошення</button><button class="btn d" data-a="clouddis">Відключити</button></div>
+  <div class="note">Rules у Firebase: <code>{"rules":{".read":true,".write":true}}</code>. Хто знає адресу бази — може її читати та змінювати, не публікуйте її відкрито.</div></div>
+  <div class="card"><h3 style="margin:0 0 6px">🔎 Rozetka (пошук готових ПК)</h3><label class="lb">Власний проксі (необов’язково)</label><input id="pxurl" value="${esc(lsg('pcf_api',''))}" placeholder="https://ваш-проксі.example">
+  <div class="acts"><button class="btn" data-a="pxsave">Зберегти</button><button class="btn" data-a="rztest">🧪 Тест Rozetka</button></div><div id="rzmsg"></div></div>
+  <div class="g2"><div class="card"><label class="lb">Оголошення для всіх</label><input id="ann" value="${esc(gs('ann',''))}" placeholder="Текст (порожньо — сховати)"><div class="acts"><button class="btn" data-a="annsave">Зберегти</button></div></div>
+  <div class="card"><label class="lb">Коефіцієнт цін</label><input id="mult" type="number" step="0.01" value="${gs('mult',1)}"><label class="lb">Днів пробного Premium</label><input id="trialn" type="number" value="${gs('trial',7)}"><div class="acts"><button class="btn" data-a="multsave">Зберегти</button></div></div></div>
+  <div class="card"><label class="lb">Змінити пароль адміна</label><div class="row"><input id="ap1" type="password" placeholder="Новий пароль (від 6 символів)"><input id="ap2" type="password" placeholder="Повторіть"><button class="btn" data-a="passsave">Змінити</button></div></div>
+  <div class="card"><h3 style="margin:0 0 8px">Журнал подій</h3><div class="lgx">${lg.map(x=>`<div>${new Date(x.t).toLocaleString('uk-UA')} — <b>${esc(x.u)}</b>: ${esc(x.m)}</div>`).join('')||'Порожньо'}</div></div>`},
+ users(){const a=[...L('users')].sort((x,y)=>y.created-x.created);
+  return `<div class="card tw"><table class="tb"><tr><th>Нік</th><th>Тариф</th><th>До</th><th>Створено</th><th></th></tr><tr><td><b>Project</b></td><td>${planB(ADMINU)}</td><td>—</td><td>—</td><td></td></tr>${a.map(u=>`<tr><td><b>${esc(u.nick)}</b>${u.ban?' <span class="bdg b-free">БАН</span>':''}</td><td>${planB(u)}</td><td>${isPro(u)?(u.until?dt(u.until):'∞'):'—'}</td><td>${u.created?dt(u.created):'—'}</td><td style="white-space:nowrap"><button class="btn s" data-a="upro" data-id="${u.id}">💎 Pro</button> <button class="btn s" data-a="ufree" data-id="${u.id}">Free</button> <button class="btn s" data-a="upw" data-id="${u.id}">🔑</button> <button class="btn s" data-a="uban" data-id="${u.id}">🚫</button> <button class="btn s d" data-a="udel" data-id="${u.id}">🗑</button></td></tr>`).join('')}</table></div>`},
+ parts(){const t=UI.apt;
+  return `<div class="card"><div class="g2"><div><label class="lb">Тип</label><select data-ai="aptype"><option value="">Усі</option>${Object.keys(TYPES).map(k=>`<option value="${k}" ${UI.aptype===k?'selected':''}>${TYPES[k][1]}</option>`).join('')}</select></div><div><label class="lb">Пошук</label><input data-ai="apq" value="${esc(UI.apq)}" placeholder="назва"></div></div><div id="aplist" style="margin-top:10px"></div></div>
+  <div class="card"><h3 style="margin:0 0 8px">➕ Додати деталь</h3><div class="g3"><div><label class="lb">Тип</label><select data-ai="apt">${Object.keys(TYPES).map(k=>`<option value="${k}" ${t===k?'selected':''}>${TYPES[k][1]}</option>`).join('')}</select></div><div><label class="lb">Назва</label><input id="pa_name"></div><div><label class="lb">Ціна, ₴</label><input id="pa_price" type="number"></div></div>
+  <div class="g3">${PF[t].map(f=>`<div><label class="lb">${f}</label><input id="pf_${f}"></div>`).join('')}</div><div class="note">Приклад: ${esc(PHINT[t])}</div><div class="acts"><button class="btn" data-a="paradd">Додати</button></div></div>`},
+ presets(){return `<div class="card">${L('presets').sort((a,b)=>a.budget-b.budget).map(p=>`<div class="prow"><div class="pm"><div class="pn">${esc(p.name)}</div><div class="note" style="margin:0">${PURP[p.purpose]} · ${fmt(p.budget)}</div></div><button class="btn s d" data-a="prdel" data-id="${p.id}">🗑</button></div>`).join('')}</div>
+  <div class="card"><h3 style="margin:0 0 8px">➕ Нова збірка (формується автоматично з каталогу)</h3><div class="g3"><div><label class="lb">Назва</label><input id="pr_n"></div><div><label class="lb">Бюджет</label><input id="pr_b" type="number"></div><div><label class="lb">Призначення</label><select id="pr_p">${Object.keys(PURP).map(k=>`<option value="${k}">${PURP[k]}</option>`).join('')}</select></div></div><div class="acts"><button class="btn" data-a="pradd">Додати</button></div></div>`},
+ stores(){return `<div class="card">${L('stores').map(s=>`<div class="prow"><div class="pm"><div class="pn">${esc(s.name)} ${s.off?'<span class="bdg b-free">ВИМК</span>':''}</div><div class="note" style="margin:0;word-break:break-all">${esc(s.url)}</div></div><button class="btn s" data-a="stoggle" data-id="${s.id}">${s.off?'Увімк':'Вимк'}</button><button class="btn s d" data-a="sdel" data-id="${s.id}">🗑</button></div>`).join('')}</div>
+  <div class="card"><h3 style="margin:0 0 8px">➕ Магазин</h3><div class="g2"><div><label class="lb">Назва</label><input id="st_n"></div><div><label class="lb">URL пошуку (з {q})</label><input id="st_u" placeholder="https://shop.ua/search?q={q}"></div></div><div class="acts"><button class="btn" data-a="stadd">Додати</button></div></div>`},
+ promos(){return `<div class="card">${L('promos').map(p=>`<div class="prow"><div class="pm"><div class="pn">${esc(p.code)}</div><div class="note" style="margin:0">${p.days>0?p.days+' дн.':'назавжди'} · використано ${(p.by||[]).length}${p.max?' / '+p.max:''}</div></div><button class="btn s d" data-a="prmdel" data-id="${p.id}">🗑</button></div>`).join('')||'<div class="note">Промокодів немає</div>'}</div>
+  <div class="card"><h3 style="margin:0 0 8px">➕ Промокод</h3><div class="g3"><div><label class="lb">Код</label><input id="pm_c"></div><div><label class="lb">Днів Premium (0 = назавжди)</label><input id="pm_d" type="number" value="30"></div><div><label class="lb">Макс. використань (0 = без ліміту)</label><input id="pm_m" type="number" value="0"></div></div><div class="acts"><button class="btn" data-a="prmadd">Створити</button></div></div>`},
+ data(){return `<div class="card"><h3 style="margin:0 0 8px">💾 Дані</h3><div class="acts"><button class="btn" data-a="export">⬇️ Експорт JSON</button><label class="btn" style="cursor:pointer">⬆️ Імпорт JSON<input id="imp" type="file" accept=".json" hidden></label></div>
+  <div class="note">Робіть експорт регулярно — це ваша резервна копія.</div></div>
+  <div class="card"><h3 style="margin:0 0 8px">🧩 Каталог деталей</h3><div class="note" style="margin:0 0 8px">Деталей у базі: <b>${L('parts').length}</b> (у стандартному каталозі ${SEEDP.length})</div><div class="acts"><button class="btn" data-a="fixparts">🔧 Відновити пошкоджені/відсутні</button><button class="btn d" data-a="resetparts">♻️ Скинути каталог деталей</button><button class="btn d" data-a="resetlocal">🧹 Скинути локальні дані</button></div></div>`}};
+function vAdmin(){if(!ME||ME.role!=='admin')return '<div class="card">Немає доступу</div>';
+ const subs=[['ov','📊 Огляд'],['users','👥 Користувачі'],['parts','🧩 Деталі'],['presets','📦 Збірки'],['stores','🏬 Магазини'],['promos','🎟️ Промокоди'],['data','💾 Дані']];
+ return `<h2 class="ttl">🛡️ Адмін-панель</h2><p class="sub">Користувачі, каталог, магазини, промокоди та хмара.</p><div class="subtabs">${subs.map(s=>`<button class="st ${UI.adm===s[0]?'on':''}" data-a="asub" data-v="${s[0]}">${s[1]}</button>`).join('')}</div>${(AV[UI.adm]||AV.ov)()}`}
+function paintAP(){const el=$('#aplist');if(!el)return;const q=String(UI.apq||'').toLowerCase();
+ const a=L('parts').filter(p=>(!UI.aptype||p.type===UI.aptype)&&(!q||p.name.toLowerCase().includes(q))).sort((x,y)=>x.type.localeCompare(y.type)||x.price-y.price);
+ el.innerHTML=`<div class="note" style="margin:0 0 6px">Показано ${Math.min(a.length,80)} з ${a.length}</div>`+a.slice(0,80).map(p=>`<div class="prow"><div class="pi">${TYPES[p.type][0]}</div><div class="pm"><div class="pn">${esc(p.name)}</div><div class="tgs">${tags(p)}</div></div><input type="number" data-pp="${p.id}" value="${p.price}" style="width:100px"><button class="btn s d" data-a="pdel" data-id="${p.id}">🗑</button></div>`).join('')}
+/* ====== ВХІД / РЕЄСТРАЦІЯ ====== */
+function drawCap(){const cv=$('#capc');if(!cv)return;const x=cv.getContext('2d'),w=cv.width,h=cv.height,ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';CAP='';for(let i=0;i<5;i++)CAP+=ch[Math.random()*ch.length|0];
+ x.fillStyle='#10132a';x.fillRect(0,0,w,h);
+ for(let i=0;i<7;i++){x.strokeStyle='hsla('+(Math.random()*360|0)+',70%,60%,.6)';x.beginPath();x.moveTo(Math.random()*w,Math.random()*h);x.lineTo(Math.random()*w,Math.random()*h);x.stroke()}
+ for(let i=0;i<5;i++){x.save();x.translate(20+i*27,h/2+(Math.random()*8-4));x.rotate(Math.random()*.6-.3);x.font='bold 26px monospace';x.fillStyle='hsl('+(Math.random()*360|0)+',80%,72%)';x.textAlign='center';x.textBaseline='middle';x.fillText(CAP[i],0,0);x.restore()}
+ for(let i=0;i<40;i++){x.fillStyle='rgba(255,255,255,.35)';x.fillRect(Math.random()*w,Math.random()*h,2,2)}}
+function capOk(){const ok=(($('#cap')||{}).value||'').trim().toUpperCase()===CAP;if(!ok){drawCap();if($('#cap'))$('#cap').value=''}return ok}
+function amsg(t,ok){const e=$('#amsg');if(e){e.textContent=t;e.className='amsg'+(ok?' ok':'')}}
+function renderAuth(mode,pre){mode=mode||'login';const rec=lsg('pcf_recent',[]);
+ $('#app').innerHTML=`<div class="auth"><div class="acard"><div class="logo c"><span class="lg">⚡</span><span>PC <span class="grad">Forge</span></span></div><p class="sub c">Конфігуратор ПК з перевіркою сумісності</p>
+ <div class="seg"><button class="${mode==='login'?'on':''}" data-a="amode" data-v="login">Вхід</button><button class="${mode==='reg'?'on':''}" data-a="amode" data-v="reg">Реєстрація</button></div>
+ ${rec.length&&mode==='login'?`<div class="chips" style="margin:0 0 6px">${rec.map(n=>`<button class="chip" data-a="rec" data-v="${esc(n)}">👤 ${esc(n)}</button>`).join('')}</div>`:''}
+ <label class="lb">Нік</label><input id="nick" autocomplete="username" value="${esc(pre||'')}" maxlength="20">
+ <label class="lb">Пароль</label><input id="pw" type="password" autocomplete="${mode==='login'?'current-password':'new-password'}">
+ ${mode==='reg'?`<label class="lb">Повторіть пароль</label><input id="pw2" type="password" autocomplete="new-password">${+gs('trial',7)>0?`<label class="chk"><input id="trial" type="checkbox" checked> Активувати пробний Premium на ${gs('trial',7)} дн.</label>`:''}`:''}
+ <label class="lb">Капча</label><div class="capr"><canvas id="capc" width="150" height="48"></canvas><button class="ib" data-a="cap" type="button">⟳</button><input id="cap" maxlength="5" placeholder="Код" autocomplete="off"></div>
+ ${mode==='login'?'<label class="chk"><input id="rem" type="checkbox" checked> Запам’ятати мене</label>':''}
+ <div id="amsg" class="amsg"></div><button class="big" style="margin-top:6px" data-a="${mode==='login'?'login':'reg'}">${mode==='login'?'Увійти':'Створити акаунт'}</button>
+ <div class="note" style="text-align:center">Акаунти синхронізуються через хмару — вхід працює на будь-якому пристрої.</div></div></div>`;
+ drawCap();if(pre&&$('#pw'))$('#pw').focus()}
+function loginAs(u,rem){const st=rem?localStorage:sessionStorage;try{localStorage.removeItem('pcf_session');sessionStorage.removeItem('pcf_session');st.setItem('pcf_session',JSON.stringify({uid:u.id}))}catch(e){}
+ let r=lsg('pcf_recent',[]);r=[u.nick].concat(r.filter(n=>n.toLowerCase()!==u.nick.toLowerCase())).slice(0,4);lss('pcf_recent',r);
+ ME=u;loadUI();logEv('Вхід');render();doSync()}
+/* ====== РЕНДЕР ЗАСТОСУНКУ ====== */
+const VIEWS={pc:vPC,part:vPart,ready:vReady,saved:vSaved,tariff:vTariff,admin:vAdmin};
+function render(){if(!ME)return renderAuth();
+ const adm=ME.role==='admin',tabs=[['pc','🖥️','ПК за бюджетом'],['part','🧩','Деталь за бюджетом'],['ready','📦','Готові'],['saved','⭐','Збережене'],['tariff','💎','Тариф']];if(adm)tabs.push(['admin','🛡️','Адмін']);
+ if(!tabs.some(t=>t[0]===UI.tab))UI.tab='pc';const ann=gs('ann','');
+ $('#app').innerHTML=`<header class="hd"><div class="logo"><span class="lg">⚡</span><span>PC <span class="grad">Forge</span></span></div><div class="sp"></div>
+ <div class="pill"><span class="av">${esc(ME.nick[0].toUpperCase())}</span><span class="nm">${esc(ME.nick)}</span>${planB(ME)}</div>
+ <button class="ib" id="cbtn" data-a="cloud">☁️<i class="dot"></i></button><button class="ib" data-a="theme" title="Тема">🌓</button><button class="ib" data-a="logout" title="Вийти">⎋</button></header>
+ ${ann?`<div class="ann">📣 ${esc(ann)}</div>`:''}<main class="page"><nav class="tabs">${tabs.map(t=>`<button class="tab ${UI.tab===t[0]?'on':''}" data-a="tab" data-v="${t[0]}">${t[1]} ${t[2]}</button>`).join('')}</nav><section id="pg">${VIEWS[UI.tab]()}</section></main>
+ <nav class="bnav">${tabs.map(t=>`<button class="${UI.tab===t[0]?'on':''}" data-a="tab" data-v="${t[0]}"><span>${t[1]}</span>${t[2].split(' ')[0]}</button>`).join('')}</nav>`;
+ if(UI.tab==='part')paintParts();if(UI.tab==='admin'&&UI.adm==='parts')paintAP();setCloud(SYN.st)}
+/* ====== ХМАРА (Firebase Realtime Database, REST) ====== */
+const SYN={st:'local',err:''};let syncT=null,syncing=false,MCH=false;
+function normUrl(u){u=String(u||'').trim().replace(/\/+$/,'').replace(/\/pcf\.json$/,'').replace(/\/\.json$/,'');return /^https:\/\/[^\s]+$/.test(u)?u:''}
+function cloudUrl(){const s=lsg('pcf_cloud','');if(s==='none')return '';return normUrl(s)||normUrl(CLOUD_ID)}
+function cloudStatus(){return{ok:'синхронізовано',sync:'синхронізація…',off:'недоступна — '+SYN.err,local:'не підключена'}[SYN.st]}
+function setCloud(st,err){SYN.st=st;if(err!=null)SYN.err=err;const b=$('#cbtn');if(b){b.className='ib '+st;b.title='Хмара: '+cloudStatus()}const c=$('#cst');if(c)c.textContent=cloudStatus()}
+function schedule(ms){clearTimeout(syncT);syncT=setTimeout(()=>doSync(),ms)}
+function payload(){const o={v:1,t:Date.now()};SYNC.forEach(c=>{o[c]=DB[c]});return o}
+const arr=x=>Array.isArray(x)?x.filter(Boolean):(x&&typeof x==='object'?Object.values(x):[]);
+function merge(rem){let push=false;SYNC.forEach(c=>{const rm=new Map();arr(rem[c]).forEach(x=>{if(x&&x.id&&(!VAL[c]||VAL[c](x)))rm.set(x.id,x)});const lm=new Map(DB[c].map(x=>[x.id,x]));let ch=false;
+  rm.forEach((r,id)=>{const l=lm.get(id);if(!l||(r._ts||0)>(l._ts||0)){lm.set(id,r);ch=true}else if((l._ts||0)>(r._ts||0))push=true});
+  lm.forEach((l,id)=>{if(!rm.has(id))push=true});
+  if(ch){DB[c]=[...lm.values()];save(c);MCH=true}});return push}
+async function doSync(force){const u=cloudUrl();if(!u){setCloud('local','');return}if(syncing)return;syncing=true;setCloud('sync');
+ try{const r=await fetch(u+'/pcf.json?t='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw new Error(r.status===401||r.status===403?'Permission denied — у Firebase → Rules поставте .read і .write = true':'HTTP '+r.status);
+  const rem=(await r.json())||{};const push=merge(rem)||force||!rem.v;
+  if(push){const w=await fetch(u+'/pcf.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload())});if(!w.ok)throw new Error('Запис: HTTP '+w.status)}
+  setCloud('ok','');
+  if(MCH){MCH=false;afterSync()}
+ }catch(e){setCloud('off',e.message||String(e))}finally{syncing=false}}
+function afterSync(){const u=curUser();if(ME&&!u){ME=null;render();return}if(!ME)return;ME=u;const ae=document.activeElement,typing=ae&&/INPUT|SELECT|TEXTAREA/.test(ae.tagName);if(!typing&&['admin','tariff','ready','saved'].includes(UI.tab))render()}
+/* ====== ЖИВИЙ ПОШУК ROZETKA ====== */
+async function jget(url){const px=lsg('pcf_api',''),tries=[];if(px)tries.push(String(px).replace(/\/$/,'')+'/?url='+encodeURIComponent(url));
+ tries.push('https://corsproxy.io/?url='+encodeURIComponent(url),'https://api.allorigins.win/raw?url='+encodeURIComponent(url),url);let err='';
+ for(const u of tries){try{const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),12000);const r=await fetch(u,{signal:ctl.signal});clearTimeout(t);if(!r.ok){err='HTTP '+r.status;continue}return JSON.parse(await r.text())}catch(e){err=e.message||String(e)}}
+ throw new Error(err||'мережа недоступна')}
+async function rozetkaFind(q){const s=await jget('https://search.rozetka.com.ua/ua/search/api/v6/?front-type=xl&country=UA&lang=ua&text='+encodeURIComponent(q)+'&page=1');
+ const ids=((s&&s.data&&s.data.goods)||[]).slice(0,60);if(!ids.length)return[];const out=[];
+ for(let i=0;i<ids.length;i+=30){const d=await jget('https://xl-catalog-api.rozetka.com.ua/v4/goods/get?front-type=xl&country=UA&lang=ua&with_groups=1&with_docket=0&id='+ids.slice(i,i+30).join(','));
+  ((d&&d.data)||[]).forEach(g=>out.push({title:g.title||'',href:g.href||'',price:+g.price||0,old:+g.old_price||0,img:g.image_main||(g.images&&g.images.main)||'',ok:!g.sell_status||g.sell_status==='available'}))}
+ return out}
+const LQ={gaming:["комп'ютер ігровий","ігровий ПК"],work:["комп'ютер для монтажу","робоча станція"],stream:["комп'ютер для стрімінгу","ігровий ПК"],office:["комп'ютер офісний","ПК для навчання"]};
+async function liveFind(b,pur){let all=[],err=null;for(const q of LQ[pur]){try{all=all.concat(await rozetkaFind(q))}catch(e){err=e}}if(!all.length&&err)throw err;const seen=new Set();
+ return all.filter(g=>g.href&&g.price&&!seen.has(g.href)&&seen.add(g.href)).filter(g=>g.ok&&/комп.?ютер|\bПК\b|системн/i.test(g.title)&&!/моноблок|ноутбук|монітор|стіл|крісло|корпус|кабель|миш|клавіатур|адаптер|блок живлення/i.test(g.title)&&g.price<=b*1.05&&g.price>=b*.6).sort((a,c)=>c.price-a.price)}
+const safeHref=h=>/^https:\/\/rozetka\.com\.ua\//.test(h)?h:/^\//.test(h)?'https://rozetka.com.ua'+h:'';
+function fallbackLinks(){const q=LQ[UI.purpose][0];return `<div class="note">Шукати вручну: <span class="shops">${stores().map(s=>`<a class="shop" target="_blank" rel="noopener noreferrer" href="${esc(sUrl(s,q))}">${esc(s.name)}</a>`).join('')}</span></div>`}
+/* ====== ДІЇ ====== */
+const ACT={
+ amode:t=>renderAuth(t.dataset.v),
+ rec:t=>{const n=$('#nick');if(n)n.value=t.dataset.v;const p=$('#pw');if(p)p.focus()},
+ cap:()=>drawCap(),
+ async login(){const lk=lsg('pcf_lock',{});if(lk.until>Date.now())return amsg('Забагато спроб. Зачекайте '+Math.ceil((lk.until-Date.now())/1000)+' с');
+  const nick=$('#nick').value.trim(),pw=$('#pw').value;if(!nick||!pw)return amsg('Введіть нік і пароль');if(!capOk())return amsg('Невірна капча');
+  amsg('⏳ Перевіряю…',1);let u=findUser(nick);if(!u&&cloudUrl()){await doSync();u=findUser(nick)}
+  if(u&&u.ban)return amsg('Акаунт заблоковано');
+  const ok=u&&await checkPw(u,pw);
+  if(!ok){const n=(lk.n||0)+1;lss('pcf_lock',n>=5?{n:0,until:Date.now()+30000}:{n,until:0});drawCap();$('#cap').value='';return amsg('Невірний нік або пароль')}
+  lss('pcf_lock',{n:0,until:0});loginAs(u,$('#rem')?$('#rem').checked:true)},
+ async reg(){const nick=$('#nick').value.trim(),pw=$('#pw').value,pw2=$('#pw2').value;
+  if(!/^[a-z0-9_.\-а-яіїєґ]{3,20}$/i.test(nick))return amsg('Нік: 3–20 символів (літери, цифри, _ . -)');if(pw.length<6)return amsg('Пароль — мінімум 6 символів');if(pw!==pw2)return amsg('Паролі не збігаються');
+  if(!capOk())return amsg('Невірна капча');amsg('⏳ Перевіряю…',1);if(cloudUrl())await doSync();if(findUser(nick))return amsg('Такий нік уже зайнятий');
+  const salt=uid(),u={id:'u:'+nick.toLowerCase(),nick,salt,hash:await hashPw(pw,salt),role:'user',plan:'free',until:0,created:Date.now()};
+  if($('#trial')&&$('#trial').checked&&+gs('trial',7)>0){u.plan='pro';u.until=Date.now()+gs('trial',7)*864e5;u.trialUsed=1}
+  upd('users',u);ME={nick:nick};logEv('Реєстрація '+nick);loginAs(findUser(nick),true)},
+ logout(){try{localStorage.removeItem('pcf_session');sessionStorage.removeItem('pcf_session')}catch(e){}ME=null;render()},
+ theme(){const l=document.documentElement.classList.toggle('light');lss('pcf_theme',l?'light':'dark')},
+ cloud(){doSync().then(()=>toast(SYN.st==='ok'?'☁️ Синхронізовано':'☁️ '+(SYN.st==='local'?'Хмара не підключена':SYN.err),SYN.st==='ok'?'ok':'er'))},
+ tab(t){UI.tab=t.dataset.v;saveUI();render();scrollTo(0,0)},
+ chip(t){const v=+t.dataset.v;UI.budget=v;saveUI();$('#bud').value=v;$('#rng').value=v},
+ purp(t){UI.purpose=t.dataset.v;saveUI();$$('.seg button').forEach(b=>b.classList.toggle('on',b===t))},
+ build(){const pro=isPro(ME),b=+UI.budget||0,el=$('#res');if(b<5000){el.innerHTML='<div class="msg er">Вкажіть бюджет від 5 000 ₴</div>';return}
+  const r=buildPC(b,UI.purpose,pro?{cpu:UI.fcpu,gpu:UI.fgpu}:{});
+  if(!r.vars.length){el.innerHTML=r.min?`<div class="msg er">За такий бюджет зібрати сумісний ПК не вдалося. Мінімум для цих параметрів ≈ <b>${fmt(r.min)}</b>. Збільште бюджет або приберіть фільтри брендів.</div>`:`<div class="msg er">За такий бюджет зібрати сумісний ПК не вдалося: каталог порожній або пошкоджений (деталей у базі: ${L('parts').length} із ${SEEDP.length}).<div class="acts"><button class="btn" data-a="fixparts">♻️ Відновити каталог деталей</button></div></div>`;return}
+  const vars=pro?r.vars:r.vars.slice(0,FREE.pc);
+  el.innerHTML=vars.map((v,i)=>bcard('pc_'+i,v.title,v,{sub:`${PURP[UI.purpose]} · залишок бюджету ${fmt(Math.max(0,b-v.total))}`})).join('')+(pro?'':'<div class="note pr">🔒 У Premium — ще 2 варіанти збірки.</div>')},
+ save(t){const v=RES[t.dataset.k];if(!v)return;const pro=isPro(ME);if(!pro&&L('saved').filter(s=>s.uid===ME.id).length>=FREE.save)return toast(`Free: до ${FREE.save} збережених збірок. Перейдіть на Premium`,'er');
+  const name=prompt('Назва збірки',PURP[UI.purpose]+' '+fmt(v.total));if(name===null)return;
+  upd('saved',{id:uid(),uid:ME.id,name:name.trim()||'Збірка',ids:ORDER.map(k=>v.items[k]&&v.items[k].id).filter(Boolean),total:v.total,t:Date.now()});toast('💾 Збережено','ok')},
+ delsaved(t){if(confirm('Видалити збірку?')){del('saved',t.dataset.id);render()}},
+ openall(t){const v=RES[t.dataset.k];if(!v||!isPro(ME))return;const s=stores()[0];if(!s)return toast('Немає магазинів','er');
+  ORDER.map(k=>v.items[k]).filter(Boolean).forEach(p=>window.open(sUrl(s,queryOf(p)),'_blank','noopener'));toast('Якщо відкрилась лише одна вкладка — дозвольте спливаючі вікна для сайту')},
+ async live(){const el=$('#live'),pro=isPro(ME),b=+UI.budget||0;if(b<8000){el.innerHTML='<div class="msg er">Вкажіть бюджет від 8 000 ₴</div>';return}
+  el.innerHTML='<div class="msg in">⏳ Шукаю готові ПК на Rozetka…</div>';
+  try{const a=await liveFind(b,UI.purpose);if(!a.length){el.innerHTML='<div class="msg er">У цьому ціновому діапазоні нічого не знайдено. Змініть бюджет або призначення.</div>'+(pro?fallbackLinks():'');return}
+   const show=a.slice(0,pro?24:FREE.ready);
+   el.innerHTML=`<div class="note">Знайдено: ${a.length}</div><div class="lgrid">${show.map(g=>{const h=safeHref(g.href);return `<div class="lc">${g.img?`<img loading="lazy" referrerpolicy="no-referrer" src="${esc(g.img)}" alt="">`:''}<div class="lt">${esc(g.title)}</div><div class="lp">${fmt(g.price)}${g.old>g.price?`<s>${fmt(g.old)}</s>`:''}</div>${pro&&h?`<a class="btn" target="_blank" rel="noopener noreferrer" href="${esc(h)}">🛒 Відкрити лот на Rozetka</a>`:'<span class="note pr">🔒 Посилання — у Premium</span>'}</div>`}).join('')}</div>${pro?fallbackLinks():`<div class="note pr">🔒 Free показує ${FREE.ready} результати без посилань.</div>`}`}
+  catch(e){el.innerHTML=`<div class="msg er">Не вдалося отримати дані Rozetka: ${esc(e.message)}. Публічні проксі нестабільні — спробуйте ще раз або вкажіть власний проксі в Адмін → Огляд.</div>`+(pro?fallbackLinks():'')}},
+ promo(){const c=($('#promo').value||'').trim().toLowerCase();if(!c)return;if(ME===ADMINU)return toast('Адмін уже має повний доступ');
+  const p=L('promos').find(x=>String(x.code).toLowerCase()===c);if(!p)return toast('Промокод не знайдено','er');if(p.max&&(p.by||[]).length>=p.max)return toast('Промокод вичерпано','er');if((p.by||[]).includes(ME.id))return toast('Ви вже використали цей промокод','er');
+  grant(ME,+p.days||0);upd('promos',Object.assign({},p,{by:(p.by||[]).concat(ME.id)}));logEv('Промокод '+p.code);toast('🎉 Premium активовано','ok');render()},
+ trial(){const d=+gs('trial',7);if(ME.trialUsed||d<=0)return;grant(Object.assign({},ME,{trialUsed:1}),d);toast('🎁 Пробний Premium активовано','ok');render()},
+ /* адмін */
+ asub(t){UI.adm=t.dataset.v;saveUI();render()},
+ upro(t){const u=GI('users',t.dataset.id);if(!u)return;const d=prompt('На скільки днів Premium? (0 = назавжди)','30');if(d===null||isNaN(+d))return;grant(u,+d);logEv('Pro для '+u.nick);render()},
+ ufree(t){const u=GI('users',t.dataset.id);if(!u)return;upd('users',Object.assign({},u,{plan:'free',until:0}));render()},
+ uban(t){const u=GI('users',t.dataset.id);if(!u)return;upd('users',Object.assign({},u,{ban:u.ban?0:1}));render()},
+ udel(t){const u=GI('users',t.dataset.id);if(u&&confirm('Видалити '+u.nick+'?')){del('users',u.id);render()}},
+ async upw(t){const u=GI('users',t.dataset.id);if(!u)return;const p=prompt('Новий пароль для '+u.nick+' (від 6 символів)');if(!p||p.length<6)return;const salt=uid();upd('users',Object.assign({},u,{salt,hash:await hashPw(p,salt)}));toast('Пароль змінено','ok')},
+ pdel(t){if(confirm('Видалити деталь?')){del('parts',t.dataset.id);paintAP()}},
+ paradd(){const type=UI.apt,name=$('#pa_name').value.trim(),p={id:'p_'+uid(),type,name,price:+$('#pa_price').value,brand:brandOf(type,name)};
+  PF[type].forEach(f=>{let v=($('#pf_'+f).value||'').trim();if(['tdp','vrm','size','watt','cap','cores','vram','perf'].includes(f))v=+v;if(f==='igpu')v=(v==='1'||/так|yes/i.test(v))?1:0;p[f]=v});
+  if(!partOk(p))return toast('Не заповнено обов’язкові поля. Приклад: '+PHINT[type],'er');upd('parts',p);toast('Додано','ok');render()},
+ prdel(t){del('presets',t.dataset.id);render()},
+ pradd(){const n=$('#pr_n').value.trim(),b=+$('#pr_b').value;if(!n||b<5000)return toast('Вкажіть назву та бюджет','er');upd('presets',{id:'pr_'+uid(),name:n,budget:b,purpose:$('#pr_p').value});render()},
+ stoggle(t){const s=GI('stores',t.dataset.id);if(s){upd('stores',Object.assign({},s,{off:s.off?0:1}));render()}},
+ sdel(t){del('stores',t.dataset.id);render()},
+ stadd(){const n=$('#st_n').value.trim(),u=$('#st_u').value.trim();if(!n||!/^https?:\/\/.+\{q\}/.test(u))return toast('Потрібні назва та URL з {q}','er');upd('stores',{id:'st_'+uid(),name:n,url:u});render()},
+ prmdel(t){del('promos',t.dataset.id);render()},
+ prmadd(){const c=$('#pm_c').value.trim();if(!c)return toast('Вкажіть код','er');if(L('promos').some(p=>String(p.code).toLowerCase()===c.toLowerCase()))return toast('Такий код уже є','er');upd('promos',{id:uid(),code:c,days:+$('#pm_d').value||0,max:+$('#pm_m').value||0,by:[]});render()},
+ annsave(){ss('ann',$('#ann').value.trim());toast('Збережено','ok');render()},
+ multsave(){const m=+$('#mult').value;if(!(m>0.1&&m<10))return toast('Коефіцієнт від 0.1 до 10','er');ss('mult',m);ss('trial',Math.max(0,+$('#trialn').value||0));toast('Збережено','ok');render()},
+ async passsave(){const a=$('#ap1').value,b=$('#ap2').value;if(a.length<6)return toast('Мінімум 6 символів','er');if(a!==b)return toast('Паролі не збігаються','er');const s=uid();ss('adminpass',{s,h:await hashPw(a,s)});toast('Пароль адміна змінено','ok');$('#ap1').value=$('#ap2').value=''},
+ cloudsave(){const v=$('#cid').value.trim();if(!v){try{localStorage.removeItem('pcf_cloud')}catch(e){}}else{const u=normUrl(v);if(!u)return toast('Потрібна адреса виду https://…firebaseio.com','er');lss('pcf_cloud',u)}toast('Збережено. Натисніть 🧪 Тест','ok');doSync()},
+ async cloudtest(){const m=$('#cst'),u=normUrl($('#cid').value)||cloudUrl();if(!u)return toast('Спочатку вкажіть адресу','er');m.textContent='перевірка…';
+  try{const r=await fetch(u+'/_t.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({t:Date.now()})});if(!r.ok)throw new Error(r.status===401||r.status===403?'Permission denied — перевірте Rules (.read/.write = true)':'HTTP '+r.status);await fetch(u+'/_t.json',{method:'DELETE'});m.textContent='✅ Хмара працює (читання і запис)';toast('✅ Хмара працює','ok')}
+  catch(e){m.textContent='❌ '+e.message;toast('Помилка: '+e.message,'er')}},
+ cloudforce(){doSync(true).then(()=>toast(SYN.st==='ok'?'⬆️ Усе надіслано в хмару':'Помилка: '+SYN.err,SYN.st==='ok'?'ok':'er'))},
+ async cloudinvite(){const u=cloudUrl();if(!u)return toast('Хмара не підключена','er');const l=location.origin+location.pathname+'#cloud='+encodeURIComponent(u);if(await copy(l))toast('🔗 Посилання скопійовано','ok')},
+ clouddis(){lss('pcf_cloud','none');setCloud('local','');toast('Хмару відключено')},
+ pxsave(){const v=$('#pxurl').value.trim();lss('pcf_api',v);toast('Збережено','ok')},
+ async rztest(){const el=$('#rzmsg');el.innerHTML='<div class="msg in">⏳ Тест…</div>';try{const a=await rozetkaFind("комп'ютер ігровий");el.innerHTML=a.length?`<div class="msg ok">✅ Rozetka відповідає. Знайдено товарів: ${a.length}. Перший: ${esc(a[0].title)}</div>`:'<div class="msg er">Rozetka відповіла, але порожньо</div>'}catch(e){el.innerHTML=`<div class="msg er">❌ ${esc(e.message)}</div>`}},
+ export(){const b=new Blob([JSON.stringify(payload(),null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='pcforge-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)},
+ fixparts(){const n=repairSeed('parts',SEEDP,false,false);schedule(500);toast('Відновлено деталей: '+n+'. Всього: '+L('parts').length,'ok');render()},
+ resetparts(){if(!confirm('Скинути всі деталі до стандартного каталогу? Ваші власні деталі залишаться.'))return;repairSeed('parts',SEEDP,true);schedule(500);toast('Каталог скинуто','ok');render()},
+ resetlocal(){if(!confirm('Видалити всі локальні дані цього браузера? Хмара не зачіпається.'))return;Object.keys(localStorage).filter(k=>k.startsWith('pcf_')&&k!=='pcf_theme').forEach(k=>localStorage.removeItem(k));sessionStorage.clear();location.reload()}};
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;const f=ACT[t.dataset.a];if(!f)return;e.preventDefault();Promise.resolve().then(()=>f(t,e)).catch(er=>toast('Помилка: '+(er&&er.message||er),'er'))});
+document.addEventListener('input',e=>{const t=e.target,id=t.id;
+ if(id==='bud'||id==='rng'){const v=+t.value||0;UI.budget=v;if(id==='bud'&&$('#rng'))$('#rng').value=v;if(id==='rng'&&$('#bud'))$('#bud').value=v;saveUI()}
+ else if(id==='fcpu'||id==='fgpu'){UI[id]=t.value;saveUI()}
+ else if(id==='rbud'){UI.budget=+t.value||0;saveUI()}
+ else if(id==='rpur'){UI.purpose=t.value;saveUI()}
+ else if(t.dataset&&t.dataset.p){UI[t.dataset.p]=t.value;saveUI();paintParts()}
+ else if(t.dataset&&t.dataset.ai){UI[t.dataset.ai]=t.value;saveUI();if(t.dataset.ai==='apt')render();else paintAP()}});
+document.addEventListener('change',e=>{const t=e.target;
+ if(t.dataset&&t.dataset.pp){const p=GI('parts',t.dataset.pp),v=+t.value;if(p&&v>0){upd('parts',Object.assign({},p,{price:v}));toast('Ціну оновлено','ok')}}
+ if(t.id==='imp'&&t.files[0]){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);merge(o);MCH=false;schedule(500);toast('Імпортовано','ok');render()}catch(er){toast('Невірний файл: '+er.message,'er')}};fr.readAsText(t.files[0])}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest&&e.target.closest('.acard')&&e.target.tagName==='INPUT'&&e.target.type!=='checkbox'){const b=$('.acard .big');if(b)b.click()}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)doSync()});
+addEventListener('online',()=>doSync());
+/* ====== АНІМОВАНИЙ ФОН ====== */
+(function(){const cv=$('#bgc'),x=cv.getContext('2d');let w,h,dp,pts=[];const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ function rs(){dp=Math.min(devicePixelRatio||1,2);w=cv.width=innerWidth*dp;h=cv.height=innerHeight*dp}rs();addEventListener('resize',rs);
+ const N=innerWidth<700?32:64;for(let i=0;i<N;i++)pts.push({x:Math.random(),y:Math.random(),vx:(Math.random()-.5)*.00022,vy:(Math.random()-.5)*.00022,r:Math.random()*1.6+.6});
+ const bl=[[.15,.1,'124,92,255',0],[.88,.18,'255,79,163',2],[.5,.98,'34,211,238',4]];
+ function f(t){x.clearRect(0,0,w,h);const light=document.documentElement.classList.contains('light'),m=Math.max(w,h);
+  bl.forEach(b=>{const cx=(b[0]+Math.sin(t/6000+b[3])*.07)*w,cy=(b[1]+Math.cos(t/7000+b[3])*.07)*h,g=x.createRadialGradient(cx,cy,0,cx,cy,m*.5);g.addColorStop(0,'rgba('+b[2]+','+(light?.16:.22)+')');g.addColorStop(1,'rgba('+b[2]+',0)');x.fillStyle=g;x.fillRect(0,0,w,h)});
+  pts.forEach(p=>{p.x+=p.vx*16;p.y+=p.vy*16;if(p.x<0||p.x>1)p.vx*=-1;if(p.y<0||p.y>1)p.vy*=-1});
+  x.fillStyle=light?'rgba(90,70,200,.5)':'rgba(190,200,255,.55)';
+  pts.forEach(p=>{x.beginPath();x.arc(p.x*w,p.y*h,p.r*dp,0,7);x.fill()});
+  x.lineWidth=dp;for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=(pts[i].x-pts[j].x)*w,dy=(pts[i].y-pts[j].y)*h,d=Math.sqrt(dx*dx+dy*dy);if(d<130*dp){x.strokeStyle=(light?'rgba(90,70,200,':'rgba(160,170,255,')+(.16*(1-d/(130*dp)))+')';x.beginPath();x.moveTo(pts[i].x*w,pts[i].y*h);x.lineTo(pts[j].x*w,pts[j].y*h);x.stroke()}}
+  if(!reduce)requestAnimationFrame(f)}
+ requestAnimationFrame(f)})();
+/* ====== СТАРТ ====== */
+function init(){
+ COLS.forEach(load);seedAll();
+ if(lsg('pcf_theme','dark')==='light')document.documentElement.classList.add('light');
+ const hm=location.hash.match(/(cloud|api)=([^&]+)/g);
+ if(hm){hm.forEach(s=>{const k=s.split('=')[0],v=decodeURIComponent(s.slice(k.length+1));if(k==='cloud'&&normUrl(v))lss('pcf_cloud',normUrl(v));if(k==='api')lss('pcf_api',v)});history.replaceState(null,'',location.pathname+location.search)}
+ ME=curUser();if(ME)loadUI();
+ render();doSync();setInterval(()=>{if(!document.hidden)doSync()},30000)}
+try{init()}catch(e){showErr(e)}
+</script>
+</body>
+</html>
